@@ -1,0 +1,152 @@
+<!-- Config Node "matrix-server" -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('matrix-server',{
+        category: 'config',
+        defaults: {
+            name: {type:"text"},
+            server: {type:"text",value:"http://localhost:8008",required:true},
+            token: {type:"text",required:true},
+            userid: {type:"text",required:true},
+            room: {type:"text"},
+        },
+        label: function() {
+            return this.name;
+        },
+        oneditprepare: function() {
+            $("#node-config-input-generate").click(function() {
+                var server = $("#node-config-input-server").val();
+                var user = $("#node-config-input-user").val();
+                var pass = $("#node-config-input-pass").val();
+
+                var r = new XMLHttpRequest();
+
+                r.open('POST', server + '/_matrix/client/r0/login', true);
+                r.onload = function() {
+                    console.log(this.responseText);
+                    var res = JSON.parse(this.responseText);
+                    if (res.error) {
+                        RED.notify("Error: " + res["error"]);
+                    } else if (res.access_token) {
+                        $("#node-config-input-token").val(res["access_token"]);
+                        $("#node-config-input-userid").val(res["user_id"]);
+                    }
+                }
+                r.send(' {"type":"m.login.password", "user":"' + user + '", "password":"' + pass + '", "initial_device_display_name":"NodeRed Bot Node"}');
+            });
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="matrix-server">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-server"><i class="icon-bookmark"></i> Server</label>
+        <input type="text" id="node-config-input-server">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-user"><i class="icon-bookmark"></i> Username</label>
+        <input type="text" id="node-config-input-user">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-pass"><i class="icon-bookmark"></i> Password</label>
+        <input type="text" id="node-config-input-pass">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-userid"><i class="icon-bookmark"></i> UserId</label>
+        <input type="text" id="node-config-input-userid">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-token"><i class="icon-bookmark"></i> Token</label>
+        <span>
+            <input type="text" id="node-config-input-token">
+            <button type="button" id="node-config-input-generate" class="red-ui-button"><i class='fa fa-refresh'></i></button>
+        </span>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-room"><i class="icon-bookmark"></i> Default Room</label>
+        <input type="text" id="node-config-input-room">
+    </div>
+</script>
+
+<!-- INPUT Node "matrix-input" -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('matrix-input',{
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            room: {value:""},
+            server: {value:"", type:"matrix-server"}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "file.png",
+        label: function() {
+            return this.name||"matrix-input";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="matrix-input">
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i> Server</label>
+        <input type="text" id="node-input-server" placeholder="Server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-room"><i class="icon-tag"></i> Room</label>
+        <input type="text" id="node-input-room" placeholder="Room">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="matrix-input">
+    <p>Matrix input node</p>
+</script>
+
+<!-- OUTPUT Node "matrix-output" -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('matrix-output',{
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            room: {value:""},
+            server: {value:"", type:"matrix-server"}
+        },
+        inputs:1,
+        outputs:0,
+        icon: "file.png",
+        label: function() {
+            return this.name||"matrix-output";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="matrix-output">
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i> Server</label>
+        <input type="text" id="node-input-server" placeholder="Server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-room"><i class="icon-tag"></i> Room</label>
+        <input type="text" id="node-input-room" placeholder="Room">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="matrix-output">
+    <p>Matrix output node</p>
+</script>
+
