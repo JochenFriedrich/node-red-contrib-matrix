@@ -84,6 +84,7 @@ module.exports = function(RED) {
         node.configNode = RED.nodes.getNode(config.server);
 
         node.room = config.room;
+        node.filterself = config.filterself;
 
         if (!node.configNode) {
             node.warn("No configuration node");
@@ -99,9 +100,10 @@ module.exports = function(RED) {
         node.configNode.on("connected", function() {
             node.status({ fill: "green", shape: "ring", text: "connected" });
             node.configNode.matrixClient.on("Room.timeline", function(event, room, toStartOfTimeline) {
-                if (!event.getSender() || event.getSender() === node.configNode.userId) {
+                if (node.filterself && (!event.getSender() || event.getSender() === node.configNode.userid)) {
                     return; // ignore our own messages
                 }
+
                 if (node.room && (node.room !== event.room)) {
                     return;
                 }
@@ -109,6 +111,7 @@ module.exports = function(RED) {
 		if (event.event.type !== "org.nodered.msg") {
                     return;
                 }
+
                 var msg = event.getContent();
                 node.send(msg);
             });
