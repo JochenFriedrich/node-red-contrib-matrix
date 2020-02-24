@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-matrix",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Node-RED Module for Matrix",
   "main": "matrix.js",
   "dependencies": {
