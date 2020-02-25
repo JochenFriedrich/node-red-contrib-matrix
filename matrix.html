@@ -116,6 +116,50 @@
     <p>Matrix input node</p>
 </script>
 
+<!-- INPUT Node "matrix-recvtext" -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('matrix-recvtext',{
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            room: {value:""},
+            server: {value:"", type:"matrix-server"},
+            filterself: {value:true}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "matrix.png",
+        label: function() {
+            return this.name||"matrix-recvtext";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="matrix-recvtext">
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i> Server</label>
+        <input type="text" id="node-input-server" placeholder="Server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-room"><i class="icon-tag"></i> Room</label>
+        <input type="text" id="node-input-room" placeholder="Room">
+    </div>
+    <div class="form-row">
+        <label for="node-input-filterself"><i class="icon-tag"></i> Filter events sent by self</label>
+        <input type="checkbox" id="node-input-filterself" placeholder="Filterself">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="matrix-recvtext">
+    <p>Matrix receive text node</p>
+</script>
+
 <!-- OUTPUT Node "matrix-output" -->
 
 <script type="text/javascript">
@@ -153,5 +197,49 @@
 
 <script type="text/x-red" data-help-name="matrix-output">
     <p>Matrix output node</p>
+</script>
+
+<!-- OUTPUT Node "matrix-sendtext" -->
+
+<script type="text/javascript">
+    RED.nodes.registerType('matrix-sendtext',{
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            room: {value:""},
+            server: {value:"", type:"matrix-server"},
+            notice: {value:true}
+        },
+        inputs:1,
+        outputs:0,
+        icon: "matrix.png",
+        label: function() {
+            return this.name||"matrix-sendtext";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="matrix-sendtext">
+    <div class="form-row">
+        <label for="node-input-server"><i class="icon-tag"></i> Server</label>
+        <input type="text" id="node-input-server" placeholder="Server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-room"><i class="icon-tag"></i> Room</label>
+        <input type="text" id="node-input-room" placeholder="Room">
+    </div>
+    <div class="form-row">
+        <label for="node-input-notice"><i class="icon-tag"></i> Send Text as m.notice (silent)</label>
+        <input type="checkbox" id="node-input-notice" placeholder="Notice">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="matrix-sendtext">
+    <p>Matrix send text node</p>
 </script>
 

@@ -104,7 +104,7 @@ module.exports = function(RED) {
                     return; // ignore our own messages
                 }
 
-                if (node.room && (node.room !== event.room)) {
+                if (node.room && (node.room !== room.roomId)) {
                     return;
                 }
 
@@ -123,6 +123,58 @@ module.exports = function(RED) {
 
     }
     RED.nodes.registerType("matrix-input",MatrixInputNode);
+
+    function MatrixRecvTextNode(config) {
+        RED.nodes.createNode(this,config);
+        var node = this;
+
+        node.configNode = RED.nodes.getNode(config.server);
+
+        node.room = config.room;
+        node.filterself = config.filterself;
+
+        if (!node.configNode) {
+            node.warn("No configuration node");
+            return;
+        }
+
+        node.status({ fill: "red", shape: "ring", text: "disconnected" });
+
+        node.configNode.on("disconnected", function(){
+            node.status({ fill: "red", shape: "ring", text: "disconnected" });
+        });
+
+        node.configNode.on("connected", function() {
+            node.status({ fill: "green", shape: "ring", text: "connected" });
+            node.configNode.matrixClient.on("Room.timeline", function(event, room, toStartOfTimeline) {
+                if (node.filterself && (!event.getSender() || event.getSender() === node.configNode.userid)) {
+                    return; // ignore our own messages
+                }
+
+                if (node.room && (node.room !== room.roomId)) {
+                    return;
+                }
+
+		if (event.event.type !== "m.room.message") {
+                    return;
+                }
+
+                var msg = {
+                    payload: event.getContent().body,
+                    sender:  event.getSender(),
+                    room:  room.roomId
+                };
+
+                node.send(msg);
+            });
+        });
+
+        this.on("close", function(done) {
+            done();
+        });
+
+    }
+    RED.nodes.registerType("matrix-recvtext",MatrixRecvTextNode);
 
     function MatrixOutputNode(config) {
         RED.nodes.createNode(this,config);
@@ -172,4 +224,60 @@ module.exports = function(RED) {
     }
 
     RED.nodes.registerType("matrix-output", MatrixOutputNode);
+
+    function MatrixSendTextNode(config) {
+        RED.nodes.createNode(this,config);
+        var node = this;
+
+        node.room = config.room;
+        node.notice = config.notice;
+
+        node.configNode = RED.nodes.getNode(config.server);
+
+        if (!node.configNode) {
+            node.warn("No configuration node");
+            return;
+        }
+
+        node.configNode.on("connected", function(){
+            node.status({ fill: "green", shape: "ring", text: "connected" });
+        });
+
+        node.configNode.on("disconnected", function(){
+            node.status({ fill: "red", shape: "ring", text: "disconnected" });
+        });
+
+        this.on("input", function (msg) {
+            if (! node.configNode || ! node.configNode.matrixClient) {
+                node.warn("No configuration");
+                return;
+            }
+
+            var destRoom = "";
+            if (node.room) {
+                destRoom = node.room;
+            } else if (node.configNode.room) {
+                destRoom = node.configNode.room;
+            } else {
+                node.warn("Room must be specified in configuration");
+                return;
+            }
+
+            if (node.notice) {
+                node.configNode.matrixClient.sendNotice(destRoom, msg.payload)
+                    .then(function() { })
+                    .catch(function(e){ node.warn("Error sending message " + e); });
+            } else {
+                node.configNode.matrixClient.sendTextMessage(destRoom, msg.payload)
+                    .then(function() { })
+                    .catch(function(e){ node.warn("Error sending message " + e); });
+            }
+        });
+
+        this.on("close", function(done) {
+            done();
+        });
+    }
+
+    RED.nodes.registerType("matrix-sendtext", MatrixSendTextNode);
 }
