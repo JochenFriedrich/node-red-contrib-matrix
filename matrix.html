@@ -40,36 +40,59 @@
 
 <script type="text/x-red" data-template-name="matrix-server">
     <div class="form-row">
-        <label for="node-config-input-name"><i class="icon-tag"></i> Name</label>
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-config-input-name">
     </div>
     <div class="form-row">
-        <label for="node-config-input-server"><i class="icon-bookmark"></i> Server</label>
+        <label for="node-config-input-server"><i class="fa fa-globe"></i> Server</label>
         <input type="text" id="node-config-input-server">
     </div>
+    <hr align="middle">
     <div class="form-row">
-        <label for="node-config-input-user"><i class="icon-bookmark"></i> Username</label>
+        <i class="fa fa-wrench"></i> Generate Token
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-user"><i class="fa fa-user"></i> Username</label>
         <input type="text" id="node-config-input-user">
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-pass"><i class="icon-bookmark"></i> Password</label>
+        <label for="node-config-input-pass"><i class="fa fa-lock"></i> Password</label>
         <input type="text" id="node-config-input-pass">
+        <button type="button" id="node-config-input-generate" class="red-ui-button"><i class='fa fa-refresh'></i></button>
     </div>
+    <hr align="middle">
     <div class="form-row">
-        <label for="node-config-input-userid"><i class="icon-bookmark"></i> UserId</label>
+        <label for="node-config-input-userid"><i class="fa fa-user"></i> UserId</label>
         <input type="text" id="node-config-input-userid">
     </div>
     <div class="form-row">
-        <label for="node-config-input-token"><i class="icon-bookmark"></i> Token</label>
-        <span>
-            <input type="text" id="node-config-input-token">
-            <button type="button" id="node-config-input-generate" class="red-ui-button"><i class='fa fa-refresh'></i></button>
-        </span>
+        <label for="node-config-input-token"><i class="fa fa-tag"></i> Token</label>
+        <input type="text" id="node-config-input-token">
     </div>
     <div class="form-row">
-        <label for="node-config-input-room"><i class="icon-bookmark"></i> Default Room</label>
+        <label for="node-config-input-room"><i class="fa fa-tag"></i> Default Room</label>
         <input type="text" id="node-config-input-room">
     </div>
+</script>
+
+<script type="text/x-red" data-help-name="matrix-server">
+    <h2>Matrix server configuration</h2>
+    <h3>The configuration of your matrix homeserver</h3>
+    <p>The configuration needs a server URL, a userid and an access token:</p>
+    <dl class="message-properties">
+       <dt>server<span class="property-type">string</span></dt>
+       <dd>the matrix server URL to connect to.</dd>
+       <dt>userid<span class="property-type">string</span></dt>
+       <dd>the matrix id of the user. Usually @user:server.</dd>
+       <dt>token<span class="property-type">string</span></dt>
+       <dd>the access token.</dd>
+    </dl>
+    <p>If your server supports logging in useing userid and password, you can fill in
+       server, user and password and press the generate button. This will make your browser
+       log in to your matrix account and pull matrix id and access token automatically.</p>
+    <p>Optionally, a default room might be specified:</p>
+    <dl class="message-properties">
+       <dt>room<span class="property-type">string</span></dt>
+       <dd>default matrix room to use.</dd>
+    </dl>
 </script>
 
 <!-- INPUT Node "matrix-input" -->
@@ -95,25 +118,34 @@
 
 <script type="text/x-red" data-template-name="matrix-input">
     <div class="form-row">
-        <label for="node-input-server"><i class="icon-tag"></i> Server</label>
+        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
         <input type="text" id="node-input-server" placeholder="Server">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-room"><i class="icon-tag"></i> Room</label>
+        <label for="node-input-room"><i class="fa fa-tag"></i> Room</label>
         <input type="text" id="node-input-room" placeholder="Room">
     </div>
-    <div class="form-row">
-        <label for="node-input-filterself"><i class="icon-tag"></i> Filter events sent by self</label>
-        <input type="checkbox" id="node-input-filterself" placeholder="Filterself">
-    </div>
+    <input type="checkbox" id="node-input-filterself" placeholder="Filterself">&nbsp;&nbsp;Filter events sent by self
 </script>
 
 <script type="text/x-red" data-help-name="matrix-input">
-    <p>Matrix input node</p>
+    <h2>Matrix input node</h2>
+    <h3>This node receives matrix events of type org.nodered.msg and emits the content as a node-red msg.</h3>
+    <p>The configuration has there parameters:</p>
+    <dl class="message-properties">
+       <dt>server<span class="property-type">matrix server configuration</span></dt>
+       <dd>the matrix server URL to connect to.</dd>
+       <dt>name<span class="property-type">string</span></dt>
+       <dd>the name of the node.</dd>
+       <dt>room<span class="property-type">string</span></dt>
+       <dd>the room to receive messages from. If empty, all rooms are used the matrix user has joined.</dd>
+       <dt>Events sent by self<span class="property-type">boolean</span></dt>
+       <dd>If uncheked, the node will receive its own messages.</dd>
+    </dl>
 </script>
 
 <!-- INPUT Node "matrix-recvtext" -->
@@ -139,25 +171,34 @@
 
 <script type="text/x-red" data-template-name="matrix-recvtext">
     <div class="form-row">
-        <label for="node-input-server"><i class="icon-tag"></i> Server</label>
+        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
         <input type="text" id="node-input-server" placeholder="Server">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-room"><i class="icon-tag"></i> Room</label>
+        <label for="node-input-room"><i class="fa fa-tag"></i> Room</label>
         <input type="text" id="node-input-room" placeholder="Room">
     </div>
-    <div class="form-row">
-        <label for="node-input-filterself"><i class="icon-tag"></i> Filter events sent by self</label>
-        <input type="checkbox" id="node-input-filterself" placeholder="Filterself">
-    </div>
+    <input type="checkbox" id="node-input-filterself" placeholder="Filterself">&nbsp;&nbsp;Filter events sent by self
 </script>
 
 <script type="text/x-red" data-help-name="matrix-recvtext">
-    <p>Matrix receive text node</p>
+    <h2>Matrix receive text node</h2>
+    <h3>This node receives messages of type m.text and emits the content is a node-red msg.payload</h3>
+    <p>The configuration has there parameters:</p>
+    <dl class="message-properties">
+       <dt>server<span class="property-type">matrix server configuration</span></dt>
+       <dd>the matrix server URL to connect to.</dd>
+       <dt>name<span class="property-type">string</span></dt>
+       <dd>the name of the node.</dd>
+       <dt>room<span class="property-type">string</span></dt>
+       <dd>the room to receive messages from. If empty, all rooms are used the matrix user has joined.</dd>
+       <dt>Events sent by self<span class="property-type">boolean</span></dt>
+       <dd>If uncheked, the node will receive its own messages.</dd>
+    </dl>
 </script>
 
 <!-- OUTPUT Node "matrix-output" -->
@@ -182,21 +223,31 @@
 
 <script type="text/x-red" data-template-name="matrix-output">
     <div class="form-row">
-        <label for="node-input-server"><i class="icon-tag"></i> Server</label>
+        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
         <input type="text" id="node-input-server" placeholder="Server">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-room"><i class="icon-tag"></i> Room</label>
+        <label for="node-input-room"><i class="fa fa-tag"></i> Room</label>
         <input type="text" id="node-input-room" placeholder="Room">
     </div>
 </script>
 
 <script type="text/x-red" data-help-name="matrix-output">
-    <p>Matrix output node</p>
+    <h2>Matrix output node</h2>
+    <h3>This node sends node-red msg messages to matrix as content of org.nodered.msg matrix events.</h3>
+    <p>The configuration has there parameters:</p>
+    <dl class="message-properties">
+       <dt>server<span class="property-type">matrix server configuration</span></dt>
+       <dd>the matrix server URL to connect to.</dd>
+       <dt>name<span class="property-type">string</span></dt>
+       <dd>the name of the node.</dd>
+       <dt>room<span class="property-type">string</span></dt>
+       <dd>the room to send messages to. If empty, the default room will be used. If this is empty, too, the message won't be sent.</dd>
+    </dl>
 </script>
 
 <!-- OUTPUT Node "matrix-sendtext" -->
@@ -222,24 +273,40 @@
 
 <script type="text/x-red" data-template-name="matrix-sendtext">
     <div class="form-row">
-        <label for="node-input-server"><i class="icon-tag"></i> Server</label>
+        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
         <input type="text" id="node-input-server" placeholder="Server">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-room"><i class="icon-tag"></i> Room</label>
+        <label for="node-input-room"><i class="fa fa-tag"></i> Room</label>
         <input type="text" id="node-input-room" placeholder="Room">
     </div>
-    <div class="form-row">
-        <label for="node-input-notice"><i class="icon-tag"></i> Send Text as m.notice (silent)</label>
-        <input type="checkbox" id="node-input-notice" placeholder="Notice">
-    </div>
+    <input type="checkbox" id="node-input-notice" placeholder="Notice">&nbsp;&nbsp; Send Text as m.notice (silent)
 </script>
 
 <script type="text/x-red" data-help-name="matrix-sendtext">
-    <p>Matrix send text node</p>
+    <h2>Matrix send text node</h2>
+    <h3>This node sends messages to matrix as m.text matrix events.</h3>
+    <p>The configuration has there parameters:</p>
+    <dl class="message-properties">
+       <dt>server<span class="property-type">matrix server configuration</span></dt>
+       <dd>the matrix server URL to connect to.</dd>
+       <dt>name<span class="property-type">string</span></dt>
+       <dd>the name of the node.</dd>
+       <dt>room<span class="property-type">string</span></dt>
+       <dd>the room to send messages to. The order to choose the room to send message to is:
+         <ul>
+           <dd>msg.roomId</dd>
+           <dd>The room specified here</dd>
+           <dd>The default room specified in the server</dd>
+         </ul>
+         If no room can be found, the message won't be sent.
+       </dd>
+       <dt>send text as m.notice<span class="property-type">boolean</span></dt>
+       <dd>Use m.notice sub type to send messages silent</dd>
+    </dl>
 </script>
 

@@ -162,7 +162,7 @@ module.exports = function(RED) {
                 var msg = {
                     payload: event.getContent().body,
                     sender:  event.getSender(),
-                    room:  room.roomId
+                    roomId:  room.roomId
                 };
 
                 node.send(msg);
@@ -254,7 +254,9 @@ module.exports = function(RED) {
             }
 
             var destRoom = "";
-            if (node.room) {
+            if (msg.roomId) {
+                destRoom = msg.roomId;
+            } else if (node.room) {
                 destRoom = node.room;
             } else if (node.configNode.room) {
                 destRoom = node.configNode.room;
